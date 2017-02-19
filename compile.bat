@@ -1,0 +1,2 @@
+C:\LEARNING\SCHOOL\COMP308\TASM\bin\tasm /zi %1.asm
+C:\LEARNING\SCHOOL\COMP308\TASM\bin\tlink /v %1.obj
