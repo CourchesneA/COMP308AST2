@@ -7,7 +7,7 @@
     int2 db  "Input second integer: ",0
     int3 db  "Input third integer: ",0
     sub1 db  "First int - second int: ",0
-    sub2 db  "second int - third int: ",0
+    sub2 db  "Second int - third int: ",0
 
 .data?
     inputstr db 100 dup(?)
@@ -21,7 +21,7 @@ start:
     jmp main
 
 main:
-    
+    ;--------------------ast 1 
     ;call getche
     
     ; value is in dx, 
@@ -93,7 +93,7 @@ main:
     push ax
     call puts
     pop ax
-    ;print a-b
+    ;;print a-b
     mov dx, ax  ;use dx for computations
     sub dx, bx
     push dx
@@ -101,7 +101,19 @@ main:
 
     call println
 
-    ; compute B-C
+    ;compute B-C
+    push ax
+    lea ax, sub2
+    push ax
+    call puts
+    pop ax
+    ;;print B-C
+    mov dx, bx  ;use dx for computations
+    sub dx, cx
+    push dx
+    call printInt
+
+    call println
     
 
     jmp exit
@@ -285,10 +297,23 @@ printInt:
     ; we will shift dx
     
     mov ax, dx
+    ;handle the case of integer is zero in the beginning:
+    cmp dx,0
+    jz zeroInt
+    mov ax, -1
+    push ax
+    jmp intLoop
+
+zeroInt:
+    mov ax, '0'
+    push ax
+    call putch
+    jmp intEnd
+
 intLoop:
     ; compare with zero
     cmp dx, 0
-    jz intEnd
+    jz intLoop2
     
     mov ax, dx
     mov ah,0        ; To handle run-time only division overflow
@@ -306,20 +331,34 @@ intLoop:
     mov ah, 0   ; clear ah
     add ax, '0'     ; convert input to ascii
     push ax     ; push ax for puche
-    call putch
+    ;call putch
 
     jmp intLoop
 
+
+
+
+intLoop2:
+    ; Unroll the stack and print them
+    pop ax
+    cmp ax, -1
+    jz intEnd
+
+    push ax
+    call putch
+    jmp intLoop2
+    
 intEnd:
-    ;pop cx
-    ;pop bx
-    ;pop ax      ; load user registers
-    ;pop dx
 
-    ;mov sp, bp      ; restore SP
-    ;pop bp
+    pop cx
+    pop bx
+    pop ax      ; load user registers
+    pop dx
 
-    ;ret 2       ; pop a word from the stack (from the argument) 
+    mov sp, bp      ; restore SP
+    pop bp
+
+    ret 2       ; pop a word from the stack (from the argument) 
  
 
 exit:
