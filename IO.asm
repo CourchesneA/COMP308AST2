@@ -180,6 +180,76 @@ endl1:
     ret 2
 
 
+getInt:
+    ;Take input ascii from the keyboard and return its integer value
+
+    push ax
+
+    mov ah, 8
+    int 21h
+    mov dl, al
+    mov ah, 2
+    int 21h
+
+    pop ax
+
+    sub dl, '0' ; Convert to integer
+
+    ret         ; value will be in dl
+
+printInt:
+    ; take a 16 bits integer as argument on the stack,
+    ; return ascii characters using putch
+
+    push bp     ; save Base Pointer
+    mov bp, sp  ; get the stack pointer
+
+    push dx     ; Save register
+
+    mov dx, word ptr ss:[bp+4]  ; get argument 
+
+    push ax     ; Save register
+    push bx
+
+    add dx, '0'     ; convert input to ascii
+
+    ; Now we want to print each digit
+    ; bx will contain the digits to prints
+    ; we will shift dx
+    
+    mov ax, dx
+intLoop:
+    ;compare with zero
+    cmp dx, 0
+    jz intEnd
+    
+    mov ax, dx
+    ;not zero, shift (base 10)
+    div 10
+    
+    ;al = ax / 10
+    ;ah = ax % 10
+    mov dx, al  ;save al in dx for futur iterations
+    
+    ;print number in al 
+    mov al, ah  ; put digit to print in al
+    mov ah, 0   ; clear ah
+    push ax     ; push ax for puche
+    call putche
+
+    jmp intLoop
+
+intEnd:
+    pop bx
+    pop ax      ; load user registers
+    pop dx
+
+    mov sp, bp      ; restore SP
+    pop bp
+
+    ret 2       ; pop a word from the stack (from the argument) 
+ 
+
 exit:
     mov ax, 4c00h    ; Exit function
     int 21h
