@@ -3,6 +3,11 @@
 .data
     msg1 db  "Please, input your name: ",0
     msg2 db  "Your name is: "
+    int1 db  "Input first integer: ",0
+    int2 db  "Input second integer: ",0
+    int3 db  "Input third integer: ",0
+    sub1 db  "First int - second int: ",0
+    sub2 db  "second int - third int: ",0
 
 .data?
     inputstr db 100 dup(?)
@@ -23,37 +28,98 @@ main:
     ; store input on stack to pass it as a param
     ;push dx
     ; display prompt
-    lea ax, msg1     ; load the string address
-    push ax         ; pass the string address as argument
-    call puts
+    ;lea ax, msg1     ; load the string address
+    ;push ax         ; pass the string address as argument
+    ;call puts
 
     ; take input with echo
-    lea ax, inputstr
-    push ax
-    call gets
+    ;lea ax, inputstr
+    ;push ax
+    ;call gets
 
     ; print new line
+    ;mov dl, 10
+    ;mov ah, 02h
+    ;int 21h
+    ;mov dl, 13
+    ;mov ah, 02h
+    ;int 21h
+
+    ; display second message
+    ;lea ax, msg2
+    ;push ax
+    ;call puts
+
+    ; display name
+    ;lea ax, inputstr
+    ;push ax
+    ;call puts
+
+    ;---------------------ast 2
+    ;Read first integer
+    lea ax, int1
+    push ax
+    call puts
+    call getche     ;value in dl
+    call println
+    mov ax, dx
+    mov ah,0        ;Char a in ax
+
+    ;Read second integer
+    push ax     ;Save A
+    lea ax, int2
+    push ax
+    call puts
+    pop ax
+    call getInt
+    call println   
+    mov bx, dx      ;int B in bx
+
+    ;Read third integer
+    push ax     ;Save A
+    lea ax, int3
+    push ax
+    call puts
+    pop ax
+    call getInt
+    call println
+    mov cx, dx       ;int C in cx
+
+    call println
+
+    ; compute A-B
+    push ax
+    lea ax, sub1
+    push ax
+    call puts
+    pop ax
+    ;print a-b
+    mov dx, ax  ;use dx for computations
+    sub dx, bx
+    push dx
+    call printInt
+
+    call println
+
+    ; compute B-C
+    
+
+    jmp exit
+
+
+println:
+    ; print new line
+    push ax
+    push dx
     mov dl, 10
     mov ah, 02h
     int 21h
     mov dl, 13
     mov ah, 02h
     int 21h
-
-    ; display second message
-    lea ax, msg2
-    push ax
-    call puts
-
-    ; display name
-    lea ax, inputstr
-    push ax
-    call puts
-    
-
-    jmp exit
-
-
+    pop dx
+    pop ax
+    ret
 
 getche:             ; Read, echo and return character
 
@@ -210,8 +276,9 @@ printInt:
 
     push ax     ; Save register
     push bx
+    push cx
 
-    add dx, '0'     ; convert input to ascii
+    ;add dx, '0'     ; convert input to ascii
 
     ; Now we want to print each digit
     ; bx will contain the digits to prints
@@ -219,35 +286,40 @@ printInt:
     
     mov ax, dx
 intLoop:
-    ;compare with zero
+    ; compare with zero
     cmp dx, 0
     jz intEnd
     
     mov ax, dx
+    mov ah,0        ; To handle run-time only division overflow
     ;not zero, shift (base 10)
-    div 10
+    mov cl, 10
+    div cl
     
-    ;al = ax / 10
-    ;ah = ax % 10
-    mov dx, al  ;save al in dx for futur iterations
+    ; al = ax / 10
+    ; ah = ax % 10
+    mov dl, al  ;save al in dx for future iterations
+    mov dh, 0
     
-    ;print number in al 
+    ; print number in al 
     mov al, ah  ; put digit to print in al
     mov ah, 0   ; clear ah
+    add ax, '0'     ; convert input to ascii
     push ax     ; push ax for puche
-    call putche
+    call putch
 
     jmp intLoop
 
 intEnd:
-    pop bx
-    pop ax      ; load user registers
-    pop dx
+    ;pop cx
+    ;pop bx
+    ;pop ax      ; load user registers
+    ;pop dx
 
-    mov sp, bp      ; restore SP
-    pop bp
+    ;mov sp, bp      ; restore SP
+    ;pop bp
 
-    ret 2       ; pop a word from the stack (from the argument) 
+    ;ret 2       ; pop a word from the stack (from the argument) 
  
 
 exit:
