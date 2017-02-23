@@ -6,8 +6,8 @@ SVGA info - VersionL: 0
 SVGA info - VersionG: 2
 //Those 2 lines say that the version of VBE is 0200h which means VBE 2.0
 
-SVGA info - OEMStringPtr: 500
-//pointer to a string that can be used to identify the video chip, video board, memory configuration, etc. 
+SVGA info - OEMStringPtr: 5860
+//pointer to a string that can be used to identify the video chip, video board, memory configuration, etc. It should be converted to hex to be used 
 
 Mode info - X Resolution: 40
 //amount of pixel going across the screen

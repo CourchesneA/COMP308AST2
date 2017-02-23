@@ -157,22 +157,22 @@ vesaPresent:
     push ax
     call puts
     ;print the info
-    mov al, byte ptr [di+6]
-    mov ah,0
+    mov ax, word ptr [di+6]
+    ;mov ah,0
     push ax
     call printInt
-    mov al, byte ptr [di+7]
-    mov ah,0
+    ;mov al, byte ptr [di+7]
+    ;mov ah,0
+    ;push ax
+    call printInt
+    mov ax, word ptr [di+8]
+    ;mov ah,0
     push ax
     call printInt
-    mov al, byte ptr [di+8]
-    mov ah,0
-    push ax
-    call printInt
-    mov al, byte ptr [di+8]
-    mov ah,0
-    push ax
-    call putch
+    ;mov al, byte ptr [di+8]
+    ;mov ah,0
+    ;push ax
+    ;call putch
     call println
 
     ;--SVGA Mode Info--
