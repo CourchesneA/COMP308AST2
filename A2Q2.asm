@@ -2,16 +2,30 @@
 .stack 100h
 .data
     msg1 db  "Please, input your name: ",0
-    msg2 db  "Your name is: "
+    msg2 db  "Your name is: ",0
+
     int1 db  "Input first integer: ",0
     int2 db  "Input second integer: ",0
     int3 db  "Input third integer: ",0
     sub1 db  "First int - second int: ",0
     sub2 db  "Second int - third int: ",0
+
     noVesa db "Error: No VESA found",0
+    info1 db "SVGA info - Signature: ",0
+    info2 db "SVGA info - VersionL: ",0
+    info3 db "SVGA info - VersionG: ",0
+    info4 db "SVGA info - OEMStringPtr: ",0
+    mode1 db "Mode info - X Resolution: ",0
+    mode2 db "Mode info - Y Resolution: ",0
+    mode3 db "Mode info - X Character size: ",0
+    mode4 db "Mode info - Y Character size: ",0
+    mode5 db "Mode info - Bits per pixel: ",0
+    mode6 db "Mode info - NumberOfBanks: ",0
+    mode7 db "Mode info - Memory Model: ",0
+
 
 .data?
-    inputstr db 100 dup(?)
+    ;inputstr db 100 dup(?)
 
     SVGA_Info STRUC
         Signature       dd ?
@@ -30,7 +44,7 @@
 
     svga_i  SVGA_Info<>
 
-    SVGA_MOdeInfo STRUC
+    SVGA_ModeInfo STRUC
         ModeAttributes      dw ?        ; mode attributes
         WinAAttributes      db ?    ; window A attributes
         WinBAttributes      db ?    ; window B attributes
@@ -70,6 +84,7 @@ start:
     
     mov ax, @data
     mov ds, ax      ;define DATA segment
+    mov es, ax
 
     jmp main
 
@@ -80,11 +95,12 @@ main:
 
     ;--SVGA info (VESA)--
     mov ax, 4f00h
+    mov cx, bx
     mov di, offset svga_i
-    ;TODO check if call success
-    ;by checking if ax still has 004f
+    int 10h
     ;--------------------
-    cmp ax,0x004f
+    ;Check if Vesa was found
+    cmp ax, 004fh
     jz vesaPresent
     
     ;Vesa call returned error, exit with error message
@@ -96,6 +112,69 @@ main:
 
 vesaPresent:
 
+    ;Print info
+    ;info[1]
+    lea ax, info1
+    push ax
+    call puts
+    ;print the info
+    mov al, byte ptr [di]
+    push ax
+    call putch
+    mov al, byte ptr [di+1]
+    push ax
+    call putch
+    mov al, byte ptr [di+2]
+    push ax
+    call putch
+    mov al, byte ptr [di+3]
+    push ax
+    call putch
+    call println
+
+    ;info[2]
+    lea ax, info2
+    push ax
+    call puts
+    ;print the info
+    mov al, byte ptr [di+4]
+    push ax
+    call printInt
+    call println
+
+    ;info[3]
+    lea ax, info3
+    push ax
+    call puts
+    ;print the info
+    mov al, byte ptr [di+5]
+    push ax
+    call printInt
+    call println
+
+    ;info[4]
+    lea ax, info4
+    push ax
+    call puts
+    ;print the info
+    mov al, byte ptr [di+6]
+    mov ah,0
+    push ax
+    call printInt
+    mov al, byte ptr [di+7]
+    mov ah,0
+    push ax
+    call printInt
+    mov al, byte ptr [di+8]
+    mov ah,0
+    push ax
+    call printInt
+    mov al, byte ptr [di+8]
+    mov ah,0
+    push ax
+    call putch
+    call println
+
     ;--SVGA Mode Info--
     mov ax, 4f01h
     mov cx, bx
@@ -103,14 +182,71 @@ vesaPresent:
     int 10h
     ;------------------
 
-    ;Print info
-    ;screen resolution (di+12h, di+14h)
+    ;modeInfo:
+    ;Xresolution
+    lea ax, mode1
+    push ax
+    call puts
+    ;print the info
+    mov ax, word ptr [di+12h]
+    push ax
+    call printInt
+    call println
 
-    ;screen depgth (di+19h)
+    ;Yresolution
+    lea ax, mode2
+    push ax
+    call puts
+    mov ax, word ptr [di+14h]
+    push ax
+    call printInt
+    call println
 
-    ;number of planes (di+18h)
-
-    ;color / monochrome
+    ;XcharSize
+    lea ax, mode3
+    push ax
+    call puts
+    mov al, byte ptr [di+16h]
+    mov ah,0
+    push ax
+    call printInt
+    call println
+    ;YcharSize
+    lea ax, mode4
+    push ax
+    call puts
+    mov al, byte ptr [di+17h]
+    mov ah,0
+    push ax
+    call printInt
+    call println
+    ;BitsPerPixel
+    lea ax, mode5
+    push ax
+    call puts
+    mov al, byte ptr [di+19h]
+    mov ah,0
+    push ax
+    call printInt
+    call println
+    ;NumberOfBanks
+    lea ax, mode6
+    push ax
+    call puts
+    mov al, byte ptr [di+1ah]
+    mov ah,0
+    push ax
+    call printInt
+    call println
+    ;MemoryModel
+    lea ax, mode7
+    push ax
+    call puts
+    mov al, byte ptr [di+1bh]
+    mov ah,0
+    push ax
+    call printInt
+    call println
 
 
     

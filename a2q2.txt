@@ -1,0 +1,32 @@
+
+SVGA info - Signature: VESA
+//This line tells that the computer use a VESA card
+
+SVGA info - VersionL: 0
+SVGA info - VersionG: 2
+//Those 2 lines say that the version of VBE is 0200h which means VBE 2.0
+
+SVGA info - OEMStringPtr: 500
+//pointer to a string that can be used to identify the video chip, video board, memory configuration, etc. 
+
+Mode info - X Resolution: 40
+//amount of pixel going across the screen
+
+Mode info - Y Resolution: 25
+//amount of pixel going down
+
+Mode info - X Character size: 9
+//number of horizontal pixel used to display a character cell
+
+Mode info - Y Character size: 16
+//Number of vertical pixel used to display a character cell
+
+Mode info - Bits per pixel: 4
+//means that there is 4 bits allocated per pixel, i.e. standart 16-color VGA graphics
+
+Mode info - NumberOfBanks: 1
+//Number of banks in which the scan lines are grouped. 1 means the mode does not have scanline banks
+
+Mode info - Memory Model: 0
+//Specifies type of memory organization, 0 mean text mode
+
